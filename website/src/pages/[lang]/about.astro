@@ -1,5 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
+import CorridorStrip from '../../components/CorridorStrip.astro';
+import Logo from '../../components/Logo.astro';
 import { langs, t, type Lang } from '../../i18n';
 
 export function getStaticPaths() {
@@ -8,7 +10,112 @@ export function getStaticPaths() {
 
 const lang = Astro.params.lang as Lang;
 const dict = t(lang);
+const page = dict.aboutPage;
 ---
 <Base lang={lang} slug="about" title={dict.meta.about.title} desc={dict.meta.about.desc}>
-  <!-- About content lands in Task 11 -->
+  <section class="ab-hero">
+    <div class="container ab-hero-grid">
+      <div>
+        <p class="label" data-reveal>{page.heroKicker}</p>
+        <h1 data-split>{page.heroTitle}</h1>
+        <p class="ab-hero-text" data-reveal>{page.heroText}</p>
+      </div>
+      <div class="ab-mark" data-reveal data-reveal-delay="0.15" aria-hidden="true">
+        <Logo showWordmark={false} />
+      </div>
+    </div>
+  </section>
+
+  <section class="ab-model section">
+    <div class="container">
+      <p class="label" data-reveal>{page.modelKicker}</p>
+      <h2 data-split>{page.modelTitle}</h2>
+      <ol class="ab-steps">
+        {page.steps.map((s, i) => (
+          <li class="ab-step" data-reveal data-reveal-delay={i * 0.08}>
+            <span class="ab-step-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="ab-step-title">{s.title}</h3>
+            <p class="ab-step-text">{s.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <CorridorStrip lang={lang} compact />
+
+  <section class="ab-values section">
+    <div class="container">
+      <p class="label" data-reveal>{page.valuesKicker}</p>
+      <h2 data-split>{page.valuesTitle}</h2>
+      <div class="ab-values-grid">
+        {page.values.map((v, i) => (
+          <div class="ab-value" data-reveal data-reveal-delay={i * 0.1}>
+            <h3 class="ab-value-title">{v.title}</h3>
+            <p class="ab-value-text">{v.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
 </Base>
+
+<style>
+  .ab-hero { padding-block: calc(var(--space-4xl) + 4.25rem) var(--space-2xl); }
+  .ab-hero-grid {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: var(--space-3xl);
+    align-items: center;
+  }
+  h1 { font-size: var(--step-5); margin-block: var(--space-l) var(--space-m); max-width: 24ch; }
+  .ab-hero-text { color: var(--ink-soft); font-size: var(--step-1); max-width: 56ch; }
+  .ab-mark { justify-self: center; }
+  .ab-mark :global(svg) { width: clamp(8rem, 16vw, 13rem); height: auto; opacity: 0.9; }
+
+  .ab-steps {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-2xl);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-xl);
+  }
+  .ab-step { border-top: 1px solid var(--line); padding-top: var(--space-l); }
+  .ab-step-num {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: var(--step-3);
+    color: var(--teal);
+    line-height: 1;
+    display: block;
+    margin-bottom: var(--space-s);
+  }
+  .ab-step-title { font-family: var(--font-body); font-weight: 600; font-size: var(--step-0); margin-bottom: var(--space-xs); }
+  .ab-step-text { color: var(--ink-soft); font-size: var(--step-0); }
+
+  .ab-values-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-l);
+    margin-top: var(--space-2xl);
+  }
+  .ab-value {
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: var(--space-xl);
+  }
+  .ab-value-title { font-size: var(--step-1); margin-bottom: var(--space-s); }
+  .ab-value-text { color: var(--ink-soft); }
+
+  @media (max-width: 860px) {
+    .ab-hero-grid { grid-template-columns: 1fr; }
+    .ab-mark { display: none; }
+    .ab-steps { grid-template-columns: 1fr 1fr; }
+    .ab-values-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .ab-steps { grid-template-columns: 1fr; }
+  }
+</style>

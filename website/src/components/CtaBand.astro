@@ -1,0 +1,29 @@
+---
+import { t, pathFor, type Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const dict = t(lang);
+---
+<section class="cta-band section">
+  <div class="container cta-inner">
+    <h2 data-split>{dict.cta.title}</h2>
+    <p class="cta-sub" data-reveal>{dict.cta.sub}</p>
+    <div data-reveal data-reveal-delay="0.1">
+      <a class="btn cta-btn" href={pathFor(lang, 'contact')} data-magnetic>{dict.cta.button}</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-m);
+  }
+  h2 { font-size: var(--step-5); max-width: 22ch; }
+  .cta-sub { color: var(--ink-soft); font-size: var(--step-1); }
+  .cta-btn { margin-top: var(--space-m); font-size: var(--step-1); }
+</style>

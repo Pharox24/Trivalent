@@ -2,6 +2,9 @@
 import Base from '../../layouts/Base.astro';
 import Hero from '../../components/Hero.astro';
 import ValueChainDiagram from '../../components/ValueChainDiagram.astro';
+import DivisionCards from '../../components/DivisionCards.astro';
+import CorridorStrip from '../../components/CorridorStrip.astro';
+import CtaBand from '../../components/CtaBand.astro';
 import { langs, t, type Lang } from '../../i18n';
 
 export function getStaticPaths() {
@@ -14,5 +17,7 @@ const dict = t(lang);
 <Base lang={lang} slug="" title={dict.meta.home.title} desc={dict.meta.home.desc}>
   <Hero lang={lang} />
   <ValueChainDiagram lang={lang} />
-  <!-- Remaining home sections assemble in Task 9 -->
+  <DivisionCards lang={lang} />
+  <CorridorStrip lang={lang} />
+  <CtaBand lang={lang} />
 </Base>

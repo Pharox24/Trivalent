@@ -1,0 +1,89 @@
+---
+import { t, pathFor, type Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const dict = t(lang);
+
+const items = (['oilfield', 'coatings', 'agro'] as const).map((key, i) => ({
+  key,
+  num: String(i + 1).padStart(2, '0'),
+  ...dict.divisions.items[key],
+}));
+---
+<section class="dv-section section">
+  <div class="container">
+    <p class="label" data-reveal>{dict.divisions.kicker}</p>
+    <h2 data-split>{dict.divisions.title}</h2>
+
+    <div class="dv-grid">
+      {items.map(({ key, num, name, blurb, cta }, i) => (
+        <a class="dv-card" href={pathFor(lang, key)} data-reveal data-reveal-delay={i * 0.1}>
+          <span class="dv-num" aria-hidden="true">{num}</span>
+          <h3 class="dv-name">{name}</h3>
+          <p class="dv-blurb">{blurb}</p>
+          <span class="dv-cta u-link">
+            {cta}
+            <svg class="dv-arrow" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+              <path d="M2 8h11M9 3.5 13.5 8 9 12.5" fill="none" stroke="currentColor" stroke-width="1.6" />
+            </svg>
+          </span>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .dv-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-l);
+    margin-top: var(--space-2xl);
+  }
+  .dv-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+    padding: var(--space-xl);
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    text-decoration: none;
+    transition:
+      translate var(--dur-s) var(--ease-out-expo),
+      border-color var(--dur-s) ease,
+      box-shadow var(--dur-s) ease;
+  }
+  .dv-card:hover {
+    translate: 0 -4px;
+    border-color: var(--teal);
+    box-shadow: 0 16px 40px rgb(16 21 28 / 0.07);
+  }
+  .dv-num {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: var(--step-4);
+    line-height: 1;
+    color: var(--teal);
+  }
+  .dv-name { font-size: var(--step-1); }
+  .dv-blurb { color: var(--ink-soft); font-size: var(--step-0); flex-grow: 1; }
+  .dv-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-weight: 500;
+    font-size: var(--step--1);
+    color: var(--teal-deep);
+    align-self: start;
+  }
+  .dv-arrow { transition: translate var(--dur-s) var(--ease-out-expo); }
+  html[dir='rtl'] .dv-arrow { rotate: 180deg; }
+  .dv-card:hover .dv-arrow { translate: 4px 0; }
+  html[dir='rtl'] .dv-card:hover .dv-arrow { translate: -4px 0; }
+
+  @media (max-width: 860px) {
+    .dv-grid { grid-template-columns: 1fr; }
+  }
+</style>

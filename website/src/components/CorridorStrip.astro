@@ -1,0 +1,125 @@
+---
+import { t, dirFor, type Lang } from '../i18n';
+
+interface Props { lang: Lang; compact?: boolean }
+const { lang, compact = false } = Astro.props;
+const dict = t(lang);
+const isRTL = dirFor(lang) === 'rtl';
+
+// Route line across a 1200×200 strip: origin (China) → Gulf → Egypt → Africa.
+const W = 1200;
+const X = (x: number) => (isRTL ? W - x : x);
+const stops = [
+  { x: 80, y: 130, key: 'origin' as const },
+  { x: 470, y: 90, key: 'gulf' as const },
+  { x: 790, y: 60, key: 'egypt' as const },
+  { x: 1120, y: 120, key: 'africa' as const },
+];
+const routePath = stops
+  .map((s, i) => {
+    if (i === 0) return `M ${X(s.x)},${s.y}`;
+    const p = stops[i - 1];
+    const midX = (X(p.x) + X(s.x)) / 2;
+    return `C ${midX},${p.y} ${midX},${s.y} ${X(s.x)},${s.y}`;
+  })
+  .join(' ');
+---
+<section class:list={['cr-section', { 'cr-section--compact': compact }]}>
+  <div class="container">
+    <p class="label label--inverse" data-reveal>{dict.corridor.kicker}</p>
+    <h2 data-split>{dict.corridor.title}</h2>
+
+    {!compact && (
+      <div class="cr-points">
+        {dict.corridor.points.map((p, i) => (
+          <div class="cr-point" data-reveal data-reveal-delay={i * 0.1}>
+            <h3 class="cr-point-title">{p.title}</h3>
+            <p class="cr-point-text">{p.text}</p>
+          </div>
+        ))}
+      </div>
+    )}
+
+    <div class="cr-route" role="img" aria-label={`${dict.corridor.cities.origin} → ${dict.corridor.cities.gulf} → ${dict.corridor.cities.egypt} → ${dict.corridor.cities.africa}`}>
+      <svg viewBox={`0 0 ${W} 200`} preserveAspectRatio="xMidYMid meet">
+        <path class="cr-line" d={routePath} pathLength="1" />
+        {stops.map((s) => (
+          <>
+            <circle class="cr-stop" cx={X(s.x)} cy={s.y} r="5" />
+            <circle class="cr-pulse" cx={X(s.x)} cy={s.y} r="5" />
+            <text class="cr-city" x={X(s.x)} y={s.y + 32} text-anchor="middle">
+              {dict.corridor.cities[s.key]}
+            </text>
+          </>
+        ))}
+      </svg>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cr-section {
+    background: var(--ink);
+    color: var(--paper);
+    padding-block: var(--space-4xl);
+  }
+  .cr-section--compact { padding-block: var(--space-3xl); }
+  .label--inverse { color: var(--teal-wash); }
+  h2 { color: var(--paper); margin-top: var(--space-s); }
+
+  .cr-points {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-2xl);
+    margin-top: var(--space-2xl);
+  }
+  .cr-point-title {
+    font-family: var(--font-body);
+    font-size: var(--step-0);
+    font-weight: 600;
+    color: var(--teal-wash);
+    margin-bottom: var(--space-xs);
+  }
+  .cr-point-text { color: color-mix(in srgb, var(--paper) 70%, transparent); font-size: var(--step-0); }
+
+  .cr-route { margin-top: var(--space-3xl); }
+  .cr-route svg { width: 100%; height: auto; overflow: visible; }
+  .cr-line {
+    fill: none;
+    stroke: var(--teal-wash);
+    stroke-width: 1.6;
+    stroke-dasharray: 0.012 0.008;
+    animation: cr-march 30s linear infinite;
+    opacity: 0.85;
+  }
+  @keyframes cr-march {
+    to { stroke-dashoffset: -1; }
+  }
+  .cr-stop { fill: var(--teal-wash); }
+  .cr-pulse {
+    fill: none;
+    stroke: var(--teal-wash);
+    stroke-width: 1;
+    opacity: 0.6;
+    transform-origin: center;
+    transform-box: fill-box;
+    animation: cr-pulse 3s var(--ease-out-expo) infinite;
+  }
+  @keyframes cr-pulse {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(3.2); opacity: 0; }
+  }
+  .cr-city {
+    font-family: var(--font-body);
+    font-size: 14px;
+    fill: color-mix(in srgb, var(--paper) 75%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cr-line, .cr-pulse { animation: none; }
+  }
+  @media (max-width: 860px) {
+    .cr-points { grid-template-columns: 1fr; gap: var(--space-l); }
+    .cr-city { font-size: 18px; }
+  }
+</style>

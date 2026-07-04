@@ -1,0 +1,17 @@
+{
+  "name": "trivalent-site",
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "node scripts/check-i18n.mjs && astro build",
+    "preview": "astro preview",
+    "test": "node scripts/check-i18n.mjs"
+  },
+  "dependencies": {
+    "astro": "^5.0.0",
+    "gsap": "^3.12.0",
+    "lenis": "^1.1.0",
+    "ogl": "^1.0.0"
+  }
+}

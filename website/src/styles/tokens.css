@@ -1,0 +1,46 @@
+:root {
+  /* Molecular Precision palette */
+  --paper: #f7f8fa;
+  --paper-raised: #ffffff;
+  --ink: #10151c;
+  --ink-soft: #5b6773;
+  --teal: #0d6b6b;
+  --teal-deep: #094f4f;
+  --teal-wash: #e3efef;
+  --line: #d9dee5;
+
+  /* Fluid type scale (clamp between 380px and 1440px viewports) */
+  --step--1: clamp(0.78rem, 0.74rem + 0.18vw, 0.89rem);
+  --step-0: clamp(0.94rem, 0.88rem + 0.25vw, 1.06rem);
+  --step-1: clamp(1.17rem, 1.08rem + 0.39vw, 1.42rem);
+  --step-2: clamp(1.46rem, 1.31rem + 0.63vw, 1.89rem);
+  --step-3: clamp(1.83rem, 1.58rem + 1.03vw, 2.52rem);
+  --step-4: clamp(2.29rem, 1.9rem + 1.65vw, 3.36rem);
+  --step-5: clamp(2.86rem, 2.26rem + 2.6vw, 4.48rem);
+  --step-6: clamp(3.58rem, 2.66rem + 4vw, 5.96rem);
+
+  /* Space scale */
+  --space-2xs: clamp(0.25rem, 0.23rem + 0.1vw, 0.31rem);
+  --space-xs: clamp(0.5rem, 0.46rem + 0.19vw, 0.63rem);
+  --space-s: clamp(0.75rem, 0.69rem + 0.28vw, 0.94rem);
+  --space-m: clamp(1.13rem, 1.04rem + 0.42vw, 1.41rem);
+  --space-l: clamp(1.5rem, 1.38rem + 0.56vw, 1.88rem);
+  --space-xl: clamp(2.25rem, 2.06rem + 0.85vw, 2.81rem);
+  --space-2xl: clamp(3rem, 2.75rem + 1.13vw, 3.75rem);
+  --space-3xl: clamp(4.5rem, 4.13rem + 1.69vw, 5.63rem);
+  --space-4xl: clamp(6rem, 5.5rem + 2.25vw, 7.5rem);
+
+  /* Type families — Arabic/Chinese overrides set on html[lang] in global.css */
+  --font-display: 'IBM Plex Serif', 'Noto Sans SC', serif;
+  --font-body: 'IBM Plex Sans', 'IBM Plex Sans Arabic', 'Noto Sans SC', sans-serif;
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --dur-s: 0.35s;
+  --dur-m: 0.7s;
+  --dur-l: 1.2s;
+
+  --container: 84rem;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+}

@@ -8,6 +8,11 @@ import '../styles/global.css';
 interface Props { lang: Lang; slug?: string; title: string; desc: string }
 const { lang, slug = '', title, desc } = Astro.props;
 
+const ogLocale = { en: 'en_US', ar: 'ar_EG', zh: 'zh_CN' }[lang];
+const altLocales = Object.values({ en: 'en_US', ar: 'ar_EG', zh: 'zh_CN' }).filter((l) => l !== ogLocale);
+const canonical = new URL(pathFor(lang, slug), Astro.site);
+const ogImage = new URL('/og.png', Astro.site);
+
 const fontHref = {
   en: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;1,300&family=IBM+Plex+Sans:wght@400;500;600&display=swap',
   ar: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@300;400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap',
@@ -21,7 +26,16 @@ const fontHref = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={desc} />
-    {langs.map((l) => <link rel="alternate" hreflang={l} href={pathFor(l, slug)} />)}
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content={ogLocale} />
+    {altLocales.map((l) => <meta property="og:locale:alternate" content={l} />)}
+    <meta name="twitter:card" content="summary_large_image" />
+    {langs.map((l) => <link rel="alternate" hreflang={l} href={new URL(pathFor(l, slug), Astro.site)} />)}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

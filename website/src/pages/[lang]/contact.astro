@@ -1,0 +1,14 @@
+---
+import Base from '../../layouts/Base.astro';
+import { langs, t, type Lang } from '../../i18n';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const dict = t(lang);
+---
+<Base lang={lang} slug="contact" title={dict.meta.contact.title} desc={dict.meta.contact.desc}>
+  <!-- Contact content lands in Task 12 -->
+</Base>

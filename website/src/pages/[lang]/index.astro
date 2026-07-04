@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Hero from '../../components/Hero.astro';
+import ValueChainDiagram from '../../components/ValueChainDiagram.astro';
 import { langs, t, type Lang } from '../../i18n';
 
 export function getStaticPaths() {
@@ -12,5 +13,6 @@ const dict = t(lang);
 ---
 <Base lang={lang} slug="" title={dict.meta.home.title} desc={dict.meta.home.desc}>
   <Hero lang={lang} />
-  <!-- Remaining home sections assemble across Tasks 7–9 -->
+  <ValueChainDiagram lang={lang} />
+  <!-- Remaining home sections assemble in Task 9 -->
 </Base>

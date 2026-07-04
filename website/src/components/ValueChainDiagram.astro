@@ -1,0 +1,157 @@
+---
+import { t, pathFor, dirFor, type Lang } from '../i18n';
+import { nodes, edges, DESKTOP, MOBILE, type VCNode } from '../data/valuechain';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const dict = t(lang);
+const isRTL = dirFor(lang) === 'rtl';
+
+const nodeById = Object.fromEntries(nodes.map((n) => [n.id, n]));
+
+// RTL mirrors the horizontal flow at build time; the vertical (mobile) flow
+// mirrors x positions only.
+const DX = (x: number) => (isRTL ? DESKTOP.w - x : x);
+const MX = (x: number) => (isRTL ? MOBILE.w - x : x);
+
+const edgePathDesktop = ([a, b]: [string, string]) => {
+  const s = nodeById[a], e = nodeById[b];
+  const midX = (DX(s.x) + DX(e.x)) / 2;
+  return `M ${DX(s.x)},${s.y} C ${midX},${s.y} ${midX},${e.y} ${DX(e.x)},${e.y}`;
+};
+const edgePathMobile = ([a, b]: [string, string]) => {
+  const s = nodeById[a], e = nodeById[b];
+  const midY = (s.my + e.my) / 2;
+  return `M ${MX(s.mx)},${s.my} C ${MX(s.mx)},${midY} ${MX(e.mx)},${midY} ${MX(e.mx)},${e.my}`;
+};
+
+const nodeRadius = (n: VCNode) =>
+  n.tier === 'division' ? 8 : n.tier === 'process' ? 7 : n.tier === 'market' ? 6 : 7;
+
+// Tooltip payload for diagram.ts (Task 8) — localized at build.
+const tipData = Object.fromEntries(
+  nodes.map((n) => {
+    const entry = dict.diagram.nodes[n.id as keyof typeof dict.diagram.nodes];
+    return [n.id, { label: entry.label, products: entry.products }];
+  })
+);
+---
+<section class="vc-section section">
+  <div class="container">
+    <p class="label" data-reveal>{dict.diagram.kicker}</p>
+    <h2 data-split>{dict.diagram.title}</h2>
+    <p class="vc-sub" data-reveal>{dict.diagram.sub}</p>
+  </div>
+
+  <div class="vc-wrap container">
+    {[
+      { cls: 'vc-svg--desktop', vb: DESKTOP, path: edgePathDesktop, px: (n: VCNode) => DX(n.x), py: (n: VCNode) => n.y },
+      { cls: 'vc-svg--mobile', vb: MOBILE, path: edgePathMobile, px: (n: VCNode) => MX(n.mx), py: (n: VCNode) => n.my },
+    ].map(({ cls, vb, path, px, py }) => (
+      <svg
+        class:list={['vc-svg', cls]}
+        viewBox={`0 0 ${vb.w} ${vb.h}`}
+        role="group"
+        aria-label={dict.diagram.title}
+      >
+        <g class="vc-edges">
+          {edges.map(([a, b]) => (
+            <path
+              class="vc-edge"
+              data-from={a}
+              data-to={b}
+              d={path([a, b] as [string, string])}
+              pathLength="1"
+            />
+          ))}
+        </g>
+        <g class="vc-nodes">
+          {nodes.map((n) => {
+            const label = dict.diagram.nodes[n.id as keyof typeof dict.diagram.nodes].label;
+            const inner = (
+              <>
+                {n.tier === 'process' && <circle class="vc-ring" cx={px(n)} cy={py(n)} r={nodeRadius(n) + 4.5} />}
+                <circle class:list={['vc-dot', `vc-dot--${n.tier}`]} cx={px(n)} cy={py(n)} r={nodeRadius(n)} />
+                <text class:list={['vc-label', `vc-label--${n.tier}`]} x={px(n)} y={py(n) + nodeRadius(n) + 20} text-anchor="middle">
+                  {label}
+                </text>
+              </>
+            );
+            return n.href ? (
+              <a href={pathFor(lang, n.href)} class="vc-node vc-node--link" data-node={n.id} data-tier={n.tier} data-cursor="expand" aria-label={label}>
+                {inner}
+              </a>
+            ) : (
+              <g class="vc-node" data-node={n.id} data-tier={n.tier} data-cursor="expand" tabindex="0" role="button" aria-expanded="false" aria-label={label}>
+                {inner}
+              </g>
+            );
+          })}
+        </g>
+      </svg>
+    ))}
+
+    <div class="vc-tip" role="tooltip" id="vc-tip" hidden></div>
+    <p class="vc-hint">{dict.diagram.hint}</p>
+  </div>
+
+  <script type="application/json" class="vc-data" set:html={JSON.stringify(tipData)} />
+</section>
+
+<style define:vars={{}}>
+  .vc-sub { color: var(--ink-soft); max-width: 52ch; margin-top: var(--space-m); }
+  .vc-wrap { position: relative; margin-top: var(--space-2xl); }
+
+  .vc-svg { width: 100%; height: auto; overflow: visible; }
+  .vc-svg--mobile { display: none; max-width: 26rem; margin-inline: auto; }
+  @media (max-width: 720px) {
+    .vc-svg--desktop { display: none; }
+    .vc-svg--mobile { display: block; }
+  }
+
+  .vc-edge {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 1.4;
+    transition: stroke var(--dur-s) ease;
+  }
+  .vc-edge.is-active { stroke: var(--teal); }
+
+  .vc-node { cursor: pointer; outline-offset: 6px; }
+  .vc-dot { transition: transform var(--dur-s) var(--ease-out-expo); transform-origin: center; transform-box: fill-box; }
+  .vc-node:hover .vc-dot, .vc-node:focus-visible .vc-dot { transform: scale(1.35); }
+
+  .vc-dot--feedstock { fill: var(--paper); stroke: var(--teal); stroke-width: 1.6; }
+  .vc-dot--process { fill: var(--paper); stroke: var(--teal); stroke-width: 1.6; }
+  .vc-ring { fill: none; stroke: var(--teal); stroke-width: 1; opacity: 0.45; }
+  .vc-dot--division { fill: var(--teal); }
+  .vc-dot--market { fill: var(--ink); }
+
+  .vc-label {
+    font-family: var(--font-body);
+    font-size: 14px;
+    fill: var(--ink-soft);
+  }
+  .vc-label--division { font-size: 15px; font-weight: 600; fill: var(--ink); }
+  .vc-node--link { text-decoration: none; }
+  .vc-node--link:hover .vc-label, .vc-node--link:focus-visible .vc-label { fill: var(--teal); }
+
+  .vc-tip {
+    position: absolute;
+    z-index: 10;
+    max-width: 16rem;
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: 0 12px 32px rgb(16 21 28 / 0.10);
+    padding: var(--space-m);
+    pointer-events: none;
+    font-size: var(--step--1);
+  }
+  .vc-tip :global(strong) { display: block; margin-bottom: var(--space-2xs); color: var(--ink); }
+  .vc-tip :global(ul) { margin: 0; padding-inline-start: 1.1em; color: var(--ink-soft); }
+  .vc-tip :global(li) { margin-block: 0.1em; }
+
+  .vc-hint { margin-top: var(--space-l); font-size: var(--step--1); color: var(--ink-soft); }
+  @media (min-width: 721px) { .vc-hint { display: none; } }
+</style>

@@ -1,0 +1,82 @@
+---
+import { t, type Lang } from '../i18n';
+import ProductGrid from './ProductGrid.astro';
+import CtaBand from './CtaBand.astro';
+import Derrick from './illustrations/Derrick.astro';
+import Coating from './illustrations/Coating.astro';
+import Leaf from './illustrations/Leaf.astro';
+
+type Division = 'oilfield' | 'coatings' | 'agro';
+interface Props { lang: Lang; division: Division }
+const { lang, division } = Astro.props;
+const dict = t(lang);
+
+const page = { oilfield: dict.oilfieldPage, coatings: dict.coatingsPage, agro: dict.agroPage }[division];
+const name = dict.divisions.items[division].name;
+const Illustration = { oilfield: Derrick, coatings: Coating, agro: Leaf }[division];
+---
+<section class="dp-hero">
+  <div class="container dp-hero-grid">
+    <div class="dp-hero-copy">
+      <p class="label" data-reveal>{page.index} — {name}</p>
+      <h1 data-split>{page.statement}</h1>
+      <p class="dp-intro" data-reveal>{page.intro}</p>
+    </div>
+    <div class="dp-hero-illus" data-reveal data-reveal-delay="0.15">
+      <Illustration />
+    </div>
+  </div>
+</section>
+
+<section class="dp-products section">
+  <div class="container">
+    <ProductGrid products={page.products} />
+  </div>
+</section>
+
+<section class="dp-note">
+  <div class="container">
+    <div class="dp-note-panel" data-reveal>
+      <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" class="dp-note-mark">
+        <circle cx="12" cy="12" r="10" fill="none" stroke="var(--teal)" stroke-width="1.4" />
+        <path d="M12 7.5 v5.5 M12 16.5 v.5" stroke="var(--teal)" stroke-width="1.6" stroke-linecap="round" fill="none" />
+      </svg>
+      <p>{page.sourcingNote}</p>
+    </div>
+  </div>
+</section>
+
+<CtaBand lang={lang} />
+
+<style>
+  .dp-hero { padding-block: calc(var(--space-4xl) + 4.25rem) var(--space-2xl); }
+  .dp-hero-grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: var(--space-3xl);
+    align-items: center;
+  }
+  h1 { font-size: var(--step-5); margin-block: var(--space-l) var(--space-m); max-width: 18ch; }
+  .dp-intro { color: var(--ink-soft); font-size: var(--step-1); max-width: 52ch; }
+  .dp-hero-illus { max-width: 26rem; justify-self: center; }
+
+  .dp-products { padding-block: var(--space-2xl); }
+
+  .dp-note { padding-block: var(--space-xl); }
+  .dp-note-panel {
+    display: flex;
+    gap: var(--space-m);
+    align-items: start;
+    background: var(--teal-wash);
+    border-radius: 14px;
+    padding: var(--space-xl);
+    max-width: 62rem;
+  }
+  .dp-note-mark { flex: none; translate: 0 2px; }
+  .dp-note-panel p { font-size: var(--step-0); }
+
+  @media (max-width: 860px) {
+    .dp-hero-grid { grid-template-columns: 1fr; gap: var(--space-xl); }
+    .dp-hero-illus { max-width: 18rem; }
+  }
+</style>

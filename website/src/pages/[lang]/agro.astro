@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import DivisionPage from '../../components/DivisionPage.astro';
 import { langs, t, type Lang } from '../../i18n';
 
 export function getStaticPaths() {
@@ -10,5 +11,5 @@ const lang = Astro.params.lang as Lang;
 const dict = t(lang);
 ---
 <Base lang={lang} slug="agro" title={dict.meta.agro.title} desc={dict.meta.agro.desc}>
-  <!-- Division content lands in Task 10 -->
+  <DivisionPage lang={lang} division="agro" />
 </Base>

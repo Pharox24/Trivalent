@@ -43,11 +43,23 @@ awards-calibre design that holds up as a credibility piece.
 
 - **Astro 5** static site. No backend.
 - **Styling:** vanilla CSS with custom properties as design tokens
-  (`tokens.css`); no CSS framework.
-- **Animation:** GSAP + ScrollTrigger for scroll choreography; SVG path-draw
-  animations for the value-chain diagram and route lines.
+  (`tokens.css`); no CSS framework (deliberate — bespoke art direction, fluid
+  `clamp()` type scale, custom easing). No Tailwind.
+- **Animation:** GSAP + ScrollTrigger for scroll choreography; GSAP SplitText
+  for masked line-by-line headline reveals; SVG path-draw animations for the
+  value-chain diagram and route lines.
+- **Smooth scroll:** Lenis, synced to ScrollTrigger. Native scroll retained on
+  touch devices and under `prefers-reduced-motion`.
+- **Page transitions:** Astro View Transitions — cross-page fade/morph so the
+  multi-page site reads as one continuous experience.
+- **Micro-interactions:** magnetic hover on primary CTAs, custom cursor state
+  over diagram nodes, animated link underlines. Vanilla JS.
+- **Hero backdrop (polish layer):** one restrained WebGL shader moment — faint
+  teal light-through-liquid refraction behind the hero headline, via OGL
+  (~8 KB). Degrades to the static molecular line-art when WebGL is
+  unavailable, JS is disabled, or reduced motion is requested.
 - **Diagram:** hand-built inline SVG + vanilla JS for hover/tap interactivity.
-  No WebGL.
+  No WebGL in the diagram itself.
 - **i18n:** Astro built-in i18n routing — `/en/`, `/ar/`, `/zh/`. Root `/`
   redirects to `/en/`. All copy lives in per-language content files (one
   dictionary module per language); templates are shared.
@@ -155,8 +167,12 @@ line + typical applications), sourcing/QC note, inquiry CTA.
 4. Chinese typography pass (no fallback-font tofu).
 5. Diagram: hover/tap tooltips work; keyboard focus reaches nodes; renders
    complete with JS disabled.
-6. `prefers-reduced-motion` disables animations.
-7. Lighthouse performance ≥ 90 on homepage (mobile emulation).
+6. `prefers-reduced-motion` disables animations, smooth scroll, and the hero
+   shader.
+7. Lighthouse performance ≥ 90 on homepage (mobile emulation) — including the
+   Lenis + GSAP + OGL payload.
+8. View transitions navigate cleanly between all six pages; no animation
+   double-fire after transition (ScrollTrigger re-initialises per page).
 
 ## Out of scope
 

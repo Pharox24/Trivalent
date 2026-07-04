@@ -1,0 +1,102 @@
+---
+import Logo from './Logo.astro';
+import { t, pathFor, langs, langLabel, type Lang } from '../i18n';
+
+interface Props { lang: Lang; current?: string }
+const { lang, current = '' } = Astro.props;
+const dict = t(lang);
+
+const links = [
+  { slug: 'oilfield', label: dict.nav.oilfield },
+  { slug: 'coatings', label: dict.nav.coatings },
+  { slug: 'agro', label: dict.nav.agro },
+  { slug: 'about', label: dict.nav.about },
+  { slug: 'contact', label: dict.nav.contact },
+];
+---
+<header class="nav" transition:persist="nav">
+  <div class="nav-inner container">
+    <a class="nav-logo" href={pathFor(lang)} aria-label="Trivalent Chemical Group">
+      <Logo />
+    </a>
+
+    <nav class="nav-links" aria-label="Primary">
+      {links.map(({ slug, label }) => (
+        <a
+          class="nav-link u-link"
+          href={pathFor(lang, slug)}
+          aria-current={current === slug ? 'page' : undefined}
+        >{label}</a>
+      ))}
+    </nav>
+
+    <div class="nav-side">
+      <div class="nav-langs" aria-label={dict.footer.lang}>
+        {langs.map((l) => (
+          <a
+            class="nav-lang"
+            href={pathFor(l, current)}
+            aria-current={l === lang ? 'true' : undefined}
+            lang={l}
+          >{langLabel[l]}</a>
+        ))}
+      </div>
+      <a class="btn nav-cta" href={pathFor(lang, 'contact')} data-magnetic>{dict.nav.catalog}</a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: fixed;
+    inset-inline: 0;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--paper) 82%, transparent);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--dur-s) ease;
+  }
+  :global(html.is-scrolled) .nav { border-bottom-color: var(--line); }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-l);
+    min-height: 4.25rem;
+  }
+  .nav-logo { text-decoration: none; }
+
+  .nav-links { display: flex; gap: var(--space-l); margin-inline-start: auto; }
+  .nav-link { font-size: var(--step--1); font-weight: 500; }
+  .nav-link[aria-current='page'] { color: var(--teal); }
+
+  .nav-side { display: flex; align-items: center; gap: var(--space-l); }
+  .nav-langs { display: flex; gap: var(--space-xs); }
+  .nav-lang {
+    font-size: var(--step--1);
+    text-decoration: none;
+    color: var(--ink-soft);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+  }
+  .nav-lang[aria-current='true'] { color: var(--teal); font-weight: 600; }
+  .nav-cta { font-size: var(--step--1); padding: 0.7em 1.4em; }
+
+  /* Mobile: logo row + horizontally scrollable link row. Zero-JS, always visible. */
+  @media (max-width: 860px) {
+    .nav-inner { flex-wrap: wrap; row-gap: 0; padding-block: var(--space-xs); }
+    .nav-cta { display: none; }
+    .nav-links {
+      order: 3;
+      flex-basis: 100%;
+      overflow-x: auto;
+      padding-block: var(--space-xs);
+      scrollbar-width: none;
+    }
+    .nav-links::-webkit-scrollbar { display: none; }
+    .nav-link { white-space: nowrap; }
+    .nav-side { margin-inline-start: auto; }
+  }
+</style>

@@ -1,0 +1,120 @@
+---
+import { t, type Lang } from '../i18n';
+import { FORM_ENDPOINT, CONTACT_EMAIL } from '../config';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const dict = t(lang);
+const f = dict.contactPage.form;
+---
+<div class="if-layout">
+  <form class="if-form" method="POST" action={FORM_ENDPOINT}>
+    <div class="if-row">
+      <div class="if-field">
+        <label for="if-name">{f.name}</label>
+        <input id="if-name" name="name" type="text" required autocomplete="name" />
+      </div>
+      <div class="if-field">
+        <label for="if-company">{f.company}</label>
+        <input id="if-company" name="company" type="text" required autocomplete="organization" />
+      </div>
+    </div>
+
+    <div class="if-row">
+      <div class="if-field">
+        <label for="if-email">{f.email}</label>
+        <input id="if-email" name="email" type="email" required autocomplete="email" />
+      </div>
+      <div class="if-field">
+        <label for="if-phone">{f.phone}</label>
+        <input id="if-phone" name="phone" type="tel" autocomplete="tel" dir="ltr" />
+      </div>
+    </div>
+
+    <div class="if-row">
+      <div class="if-field">
+        <label for="if-product">{f.product}</label>
+        <select id="if-product" name="product" required>
+          <option value="oilfield">{f.productOptions.oilfield}</option>
+          <option value="coatings">{f.productOptions.coatings}</option>
+          <option value="agro">{f.productOptions.agro}</option>
+          <option value="other">{f.productOptions.other}</option>
+        </select>
+      </div>
+      <div class="if-field">
+        <label for="if-quantity">{f.quantity}</label>
+        <input id="if-quantity" name="quantity" type="text" />
+      </div>
+    </div>
+
+    <div class="if-field">
+      <label for="if-destination">{f.destination}</label>
+      <input id="if-destination" name="destination" type="text" required />
+    </div>
+
+    <div class="if-field">
+      <label for="if-message">{f.message}</label>
+      <textarea id="if-message" name="message" rows="5"></textarea>
+    </div>
+
+    <button class="btn if-submit" type="submit" data-magnetic>{f.submit}</button>
+  </form>
+
+  <aside class="if-direct" data-reveal>
+    <h2 class="if-direct-title">{dict.contactPage.directTitle}</h2>
+    <p class="if-direct-text">{dict.contactPage.directText}</p>
+    <a class="btn if-mail" href={`mailto:${CONTACT_EMAIL}`}>{dict.contactPage.mailtoLabel}</a>
+    <p class="if-mail-addr" dir="ltr">{CONTACT_EMAIL}</p>
+  </aside>
+</div>
+
+<style>
+  .if-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-3xl);
+    align-items: start;
+  }
+
+  .if-form { display: flex; flex-direction: column; gap: var(--space-l); }
+  .if-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-l); }
+  .if-field { display: flex; flex-direction: column; gap: var(--space-xs); }
+
+  label { font-size: var(--step--1); font-weight: 600; color: var(--ink); }
+  input, select, textarea {
+    font: inherit;
+    color: var(--ink);
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 0.75em 1em;
+    transition: border-color var(--dur-s) ease;
+  }
+  input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px var(--teal-wash);
+  }
+  textarea { resize: vertical; }
+
+  .if-submit { align-self: start; margin-top: var(--space-s); }
+
+  .if-direct {
+    background: var(--teal-wash);
+    border-radius: 14px;
+    padding: var(--space-xl);
+    position: sticky;
+    top: calc(4.25rem + var(--space-l));
+  }
+  .if-direct-title { font-size: var(--step-2); margin-bottom: var(--space-s); }
+  .if-direct-text { color: var(--ink-soft); margin-bottom: var(--space-l); }
+  .if-mail { background: var(--ink); }
+  .if-mail:hover { background: var(--teal-deep); }
+  .if-mail-addr { margin-top: var(--space-s); font-size: var(--step--1); color: var(--ink-soft); text-align: start; }
+
+  @media (max-width: 860px) {
+    .if-layout { grid-template-columns: 1fr; gap: var(--space-xl); }
+    .if-row { grid-template-columns: 1fr; }
+    .if-direct { position: static; }
+  }
+</style>

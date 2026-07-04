@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import InquiryForm from '../../components/InquiryForm.astro';
 import { langs, t, type Lang } from '../../i18n';
 
 export function getStaticPaths() {
@@ -10,5 +11,22 @@ const lang = Astro.params.lang as Lang;
 const dict = t(lang);
 ---
 <Base lang={lang} slug="contact" title={dict.meta.contact.title} desc={dict.meta.contact.desc}>
-  <!-- Contact content lands in Task 12 -->
+  <section class="ct-hero">
+    <div class="container">
+      <h1 data-split>{dict.contactPage.title}</h1>
+      <p class="ct-intro" data-reveal>{dict.contactPage.intro}</p>
+    </div>
+  </section>
+  <section class="ct-form section">
+    <div class="container">
+      <InquiryForm lang={lang} />
+    </div>
+  </section>
 </Base>
+
+<style>
+  .ct-hero { padding-block: calc(var(--space-4xl) + 4.25rem) 0; }
+  h1 { font-size: var(--step-5); max-width: 22ch; }
+  .ct-intro { color: var(--ink-soft); font-size: var(--step-1); max-width: 52ch; margin-top: var(--space-m); }
+  .ct-form { padding-block: var(--space-2xl) var(--space-4xl); }
+</style>

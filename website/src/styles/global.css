@@ -75,7 +75,8 @@ html[dir='rtl'] .u-link { background-position: 100% 100%; }
   font-weight: 500;
   font-size: var(--step-0);
   text-decoration: none;
-  transition: background var(--dur-s) var(--ease-out-expo), transform var(--dur-s) var(--ease-out-expo);
+  /* transform intentionally not transitioned — GSAP magnetic effect owns it */
+  transition: background var(--dur-s) var(--ease-out-expo);
 }
 .btn:hover { background: var(--teal-deep); }
 

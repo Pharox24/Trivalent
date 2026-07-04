@@ -3,6 +3,7 @@
 import { initMotion, destroyMotion } from './motion';
 import { initShader, destroyShader } from './shader';
 import { initDiagram, destroyDiagram } from './diagram';
+import { initCursor, destroyCursor } from './cursor';
 
 function updateScrollState() {
   document.documentElement.classList.toggle('is-scrolled', window.scrollY > 8);
@@ -16,10 +17,12 @@ document.addEventListener('astro:page-load', () => {
   initMotion();
   initShader();
   initDiagram();
+  initCursor();
 });
 
 document.addEventListener('astro:before-swap', () => {
   destroyMotion();
   destroyShader();
   destroyDiagram();
+  destroyCursor();
 });

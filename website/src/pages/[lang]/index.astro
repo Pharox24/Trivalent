@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Hero from '../../components/Hero.astro';
 import { langs, t, type Lang } from '../../i18n';
 
 export function getStaticPaths() {
@@ -10,5 +11,6 @@ const lang = Astro.params.lang as Lang;
 const dict = t(lang);
 ---
 <Base lang={lang} slug="" title={dict.meta.home.title} desc={dict.meta.home.desc}>
-  <!-- Home sections assemble here across Tasks 6–9 -->
+  <Hero lang={lang} />
+  <!-- Remaining home sections assemble across Tasks 7–9 -->
 </Base>

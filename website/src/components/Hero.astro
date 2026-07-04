@@ -1,0 +1,97 @@
+---
+import { t, pathFor, type Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const dict = t(lang);
+---
+<section class="hero">
+  <canvas class="hero-canvas" aria-hidden="true"></canvas>
+
+  <!-- Static molecular line-art — always present; sole backdrop when WebGL is unavailable -->
+  <svg class="hero-mol" viewBox="0 0 1200 700" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+    <g class="mol" stroke-width="1.2" fill="none">
+      <line x1="920" y1="120" x2="1010" y2="180" /><line x1="1010" y1="180" x2="980" y2="280" />
+      <line x1="980" y1="280" x2="1080" y2="330" /><line x1="1010" y1="180" x2="1110" y2="150" />
+      <line x1="140" y1="520" x2="230" y2="470" /><line x1="230" y1="470" x2="330" y2="520" />
+      <line x1="230" y1="470" x2="240" y2="370" /><line x1="330" y1="520" x2="420" y2="480" />
+      <line x1="700" y1="600" x2="790" y2="560" /><line x1="790" y1="560" x2="860" y2="620" />
+    </g>
+    <g class="mol-node">
+      <circle cx="920" cy="120" r="4" /><circle cx="1010" cy="180" r="5.5" />
+      <circle cx="980" cy="280" r="4" /><circle cx="1080" cy="330" r="4" />
+      <circle cx="1110" cy="150" r="4" /><circle cx="140" cy="520" r="4" />
+      <circle cx="230" cy="470" r="5.5" /><circle cx="330" cy="520" r="4" />
+      <circle cx="240" cy="370" r="4" /><circle cx="420" cy="480" r="4" />
+      <circle cx="700" cy="600" r="4" /><circle cx="790" cy="560" r="5.5" />
+      <circle cx="860" cy="620" r="4" />
+    </g>
+  </svg>
+
+  <div class="container hero-content">
+    <p class="label" data-reveal>{dict.hero.kicker}</p>
+    <h1 data-split>
+      <span class="hero-line">{dict.hero.line1}</span>
+      <span class="hero-line hero-line--strong">{dict.hero.line2}</span>
+    </h1>
+    <p class="hero-sub" data-reveal data-reveal-delay="0.15">{dict.hero.sub}</p>
+    <div data-reveal data-reveal-delay="0.25">
+      <a class="btn" href={pathFor(lang, 'contact')} data-magnetic>{dict.hero.cta}</a>
+    </div>
+  </div>
+
+  <p class="hero-scroll" aria-hidden="true">{dict.hero.scroll}</p>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  .hero-canvas,
+  .hero-mol {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .hero-canvas { z-index: 0; }
+  .hero-mol { z-index: 1; }
+  .mol { stroke: var(--teal); opacity: 0.35; }
+  .mol-node circle { fill: var(--paper); stroke: var(--teal); stroke-width: 1.2; opacity: 0.5; }
+  .mol-node circle:nth-child(2n) { fill: var(--teal); opacity: 0.4; }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding-block: var(--space-4xl);
+  }
+  h1 { margin-block: var(--space-l) var(--space-m); max-width: 22ch; }
+  .hero-line { display: block; }
+  .hero-line--strong { font-weight: 400; color: var(--teal-deep); }
+  html[lang='ar'] .hero-line--strong, html[lang='zh'] .hero-line--strong { font-weight: 700; }
+  .hero-sub { max-width: 46ch; color: var(--ink-soft); font-size: var(--step-1); margin-bottom: var(--space-xl); }
+
+  .hero-scroll {
+    position: absolute;
+    z-index: 2;
+    bottom: var(--space-l);
+    left: calc(var(--gutter) / 2);
+    font-size: var(--step--1);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    writing-mode: vertical-rl;
+    animation: hero-bob 2.4s var(--ease-in-out-quart) infinite;
+  }
+  html[dir='rtl'] .hero-scroll { left: auto; right: calc(var(--gutter) / 2); writing-mode: vertical-lr; }
+  @keyframes hero-bob {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 8px; }
+  }
+</style>

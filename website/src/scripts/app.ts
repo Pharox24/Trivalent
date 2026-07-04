@@ -1,6 +1,7 @@
 // Global client lifecycle — the single wiring point for
 // astro:page-load (init) and astro:before-swap (teardown).
 import { initMotion, destroyMotion } from './motion';
+import { initShader, destroyShader } from './shader';
 
 function updateScrollState() {
   document.documentElement.classList.toggle('is-scrolled', window.scrollY > 8);
@@ -12,8 +13,10 @@ window.addEventListener('scroll', updateScrollState, { passive: true });
 document.addEventListener('astro:page-load', () => {
   updateScrollState();
   initMotion();
+  initShader();
 });
 
 document.addEventListener('astro:before-swap', () => {
   destroyMotion();
+  destroyShader();
 });

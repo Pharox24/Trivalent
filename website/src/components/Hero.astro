@@ -94,8 +94,8 @@ const depthOf = (z: number) => (z + 1) / 2;
     position: absolute;
     z-index: 1;
     inset-block: 0;
-    inset-inline-end: -6%;
-    width: min(58%, 100vh);
+    inset-inline-end: -7%;
+    width: min(53%, 96vh);
     display: grid;
     place-items: center;
     pointer-events: none;
@@ -115,6 +115,20 @@ const depthOf = (z: number) => (z + 1) / 2;
     font-size: 12.5px;
     font-weight: 500;
     fill: var(--ink-soft);
+  }
+  /* HTML overlay labels created by hero3d.ts (Three.js path) */
+  .hero-visual :global(.mol3d-label) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
   }
 
   .hero-content {

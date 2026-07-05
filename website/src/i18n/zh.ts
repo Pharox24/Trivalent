@@ -48,15 +48,17 @@ export const zh: Dict = {
   portfolioPage: {
     kicker: '完整价值链覆盖',
     title: '每一种产品，从原料到成品。',
-    intro: '我们采购与经营的完整化工价值链——从原油、原盐、硫磺、煤炭到天然气，贯通每一个下游系列。拖动平移，滚动或双指缩放。',
+    intro: '我们采购与经营的完整化工价值链——覆盖原油、原盐、硫磺、煤炭与天然气的 230+ 种产品。搜索某一化学品，或点击查看其上游来源与下游产品。',
     legendDaily: '核心经营产品',
     legendTracked: '延伸覆盖',
     legendUnit: '原料 / 工艺装置',
     legendApp: '终端应用',
-    reset: '重置视图',
-    zoomIn: '放大',
-    zoomOut: '缩小',
-    hint: '拖动平移 · 滚动缩放',
+    searchPlaceholder: '搜索 230+ 种产品…',
+    madeFrom: '上游来源',
+    produces: '下游产品与应用',
+    noResults: '未找到匹配产品',
+    back: '返回',
+    root: '原料',
   },
 
   hero: {

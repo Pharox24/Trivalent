@@ -1,7 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import PortfolioDiagram from '../../components/PortfolioDiagram.astro';
-import { diagrams } from '../../data/portfolio';
+import PortfolioSpotlight from '../../components/PortfolioSpotlight.astro';
 import { langs, t, type Lang } from '../../i18n';
 
 export function getStaticPaths() {
@@ -29,17 +28,7 @@ const pg = dict.portfolioPage;
   </section>
 
   <div class="container pf-body">
-    {diagrams.map((diagram) => (
-      <div class="pf-group" data-pf-group>
-        <div class="pf-controls" data-pf-controls>
-          <button type="button" data-act="out" aria-label={pg.zoomOut}>&minus;</button>
-          <button type="button" data-act="in" aria-label={pg.zoomIn}>+</button>
-          <button type="button" data-act="reset" class="pf-reset">{pg.reset}</button>
-          <span class="pf-hint">{pg.hint}</span>
-        </div>
-        <PortfolioDiagram diagram={diagram} lang={lang} />
-      </div>
-    ))}
+    <PortfolioSpotlight lang={lang} />
   </div>
 </Base>
 
@@ -48,12 +37,7 @@ const pg = dict.portfolioPage;
   h1 { font-size: var(--step-5); max-width: 20ch; }
   .pf-intro { color: var(--ink-soft); font-size: var(--step-1); max-width: 60ch; margin-top: var(--space-m); }
 
-  .pf-legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-l);
-    margin-top: var(--space-xl);
-  }
+  .pf-legend { display: flex; flex-wrap: wrap; gap: var(--space-l); margin-top: var(--space-xl); }
   .pf-leg { display: inline-flex; align-items: center; gap: var(--space-xs); font-size: var(--step--1); color: var(--ink-soft); }
   .pf-sw { width: 16px; height: 16px; border-radius: 4px; flex: none; }
   .pf-sw--daily { background: #f4c430; border: 1px solid #d9a800; }
@@ -62,30 +46,4 @@ const pg = dict.portfolioPage;
   .pf-sw--app { background: var(--paper-raised); border: 1px solid var(--line); }
 
   .pf-body { padding-bottom: var(--space-4xl); }
-  .pf-group { margin-top: var(--space-3xl); }
-
-  .pf-controls {
-    display: flex;
-    align-items: center;
-    gap: var(--space-xs);
-    margin-bottom: var(--space-s);
-  }
-  .pf-controls button {
-    min-width: 2.4rem;
-    height: 2.4rem;
-    padding: 0 0.9em;
-    background: var(--paper-raised);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    font-size: var(--step-0);
-    color: var(--ink);
-    transition: border-color var(--dur-s) ease, background var(--dur-s) ease;
-  }
-  .pf-controls button:hover { border-color: var(--teal); color: var(--teal-deep); }
-  .pf-reset { font-size: var(--step--1) !important; }
-  .pf-hint { margin-inline-start: auto; font-size: var(--step--1); color: var(--ink-soft); }
-
-  @media (max-width: 640px) {
-    .pf-hint { display: none; }
-  }
 </style>

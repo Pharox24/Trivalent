@@ -46,15 +46,17 @@ export const en = {
   portfolioPage: {
     kicker: 'Full value-chain coverage',
     title: 'Every product, from feedstock to finish.',
-    intro: 'The complete chemical value chain we source and trade — crude oil, salt, sulphur, coal, and natural gas through every downstream family. Drag to pan, scroll or pinch to zoom.',
+    intro: 'The complete chemical value chain we source and trade — 230+ products across crude oil, salt, sulphur, coal, and natural gas. Search a chemical, or click through what it is made from and what it produces.',
     legendDaily: 'Core traded products',
     legendTracked: 'Extended coverage',
     legendUnit: 'Feedstock / process unit',
     legendApp: 'End-use application',
-    reset: 'Reset view',
-    zoomIn: 'Zoom in',
-    zoomOut: 'Zoom out',
-    hint: 'Drag to pan · scroll to zoom',
+    searchPlaceholder: 'Search 230+ products…',
+    madeFrom: 'Made from',
+    produces: 'Produces & uses',
+    noResults: 'No products match',
+    back: 'Back',
+    root: 'Feedstock',
   },
 
   hero: {

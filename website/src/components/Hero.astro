@@ -1,32 +1,62 @@
 ---
 import { t, pathFor, type Lang } from '../i18n';
+import { c60, labelIndices, LABELS, project } from '../data/molecule3d';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const dict = t(lang);
+
+// Build-time static projection of the C60 molecule — the no-JS and
+// reduced-motion rendering. The canvas animation covers it when live.
+const { verts, edges } = c60();
+const labeled = labelIndices(verts);
+const VB = 640;
+const p = verts.map((v) => project(v, -0.35, 0.6, VB * 0.38, VB / 2, VB / 2));
+const staticEdges = edges
+  .map(([a, b]) => ({ a: p[a], b: p[b], z: (p[a].z + p[b].z) / 2 }))
+  .sort((e1, e2) => e1.z - e2.z);
+const depthOf = (z: number) => (z + 1) / 2;
 ---
 <section class="hero">
   <canvas class="hero-canvas" aria-hidden="true"></canvas>
 
-  <!-- Static molecular line-art — always present; sole backdrop when WebGL is unavailable -->
-  <svg class="hero-mol" viewBox="0 0 1200 700" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
-    <g class="mol" stroke-width="1.2" fill="none">
-      <line x1="920" y1="120" x2="1010" y2="180" /><line x1="1010" y1="180" x2="980" y2="280" />
-      <line x1="980" y1="280" x2="1080" y2="330" /><line x1="1010" y1="180" x2="1110" y2="150" />
-      <line x1="140" y1="520" x2="230" y2="470" /><line x1="230" y1="470" x2="330" y2="520" />
-      <line x1="230" y1="470" x2="240" y2="370" /><line x1="330" y1="520" x2="420" y2="480" />
-      <line x1="700" y1="600" x2="790" y2="560" /><line x1="790" y1="560" x2="860" y2="620" />
-    </g>
-    <g class="mol-node">
-      <circle cx="920" cy="120" r="4" /><circle cx="1010" cy="180" r="5.5" />
-      <circle cx="980" cy="280" r="4" /><circle cx="1080" cy="330" r="4" />
-      <circle cx="1110" cy="150" r="4" /><circle cx="140" cy="520" r="4" />
-      <circle cx="230" cy="470" r="5.5" /><circle cx="330" cy="520" r="4" />
-      <circle cx="240" cy="370" r="4" /><circle cx="420" cy="480" r="4" />
-      <circle cx="700" cy="600" r="4" /><circle cx="790" cy="560" r="5.5" />
-      <circle cx="860" cy="620" r="4" />
-    </g>
-  </svg>
+  <div class="hero-visual" aria-hidden="true">
+    <svg class="hero-mol3d-svg" viewBox={`0 0 ${VB} ${VB}`}>
+      {staticEdges.map(({ a, b, z }) => (
+        <line
+          x1={a.x.toFixed(1)} y1={a.y.toFixed(1)}
+          x2={b.x.toFixed(1)} y2={b.y.toFixed(1)}
+          stroke="var(--teal)"
+          stroke-width={(0.7 + depthOf(z) * 0.9).toFixed(2)}
+          opacity={(0.14 + depthOf(z) * 0.66).toFixed(2)}
+        />
+      ))}
+      {p.map((pt, vi) => {
+        const d = depthOf(pt.z);
+        const r = (1.6 + d * 2.6).toFixed(2);
+        return d > 0.82 ? (
+          <circle cx={pt.x.toFixed(1)} cy={pt.y.toFixed(1)} r={r} fill="var(--ink)" />
+        ) : d > 0.45 ? (
+          <circle cx={pt.x.toFixed(1)} cy={pt.y.toFixed(1)} r={r} fill="var(--teal)" opacity={(0.25 + d * 0.75).toFixed(2)} />
+        ) : (
+          <circle cx={pt.x.toFixed(1)} cy={pt.y.toFixed(1)} r={r} fill="var(--paper)" stroke="var(--teal)" stroke-width="1" opacity={(0.25 + d * 0.75).toFixed(2)} />
+        );
+      })}
+      {labeled.map((vi, li) =>
+        p[vi].z > 0.15 ? (
+          <g opacity={Math.min(1, (p[vi].z - 0.15) / 0.5).toFixed(2)}>
+            <line
+              x1={(p[vi].x + 6).toFixed(1)} y1={(p[vi].y - 6).toFixed(1)}
+              x2={(p[vi].x + 16).toFixed(1)} y2={(p[vi].y - 16).toFixed(1)}
+              stroke="var(--ink-soft)" stroke-width="0.8"
+            />
+            <text x={(p[vi].x + 20).toFixed(1)} y={(p[vi].y - 12).toFixed(1)} class="mol-label">{LABELS[li]}</text>
+          </g>
+        ) : null
+      )}
+    </svg>
+    <canvas class="hero-mol3d"></canvas>
+  </div>
 
   <div class="container hero-content">
     <p class="label" data-reveal>{dict.hero.kicker}</p>
@@ -51,19 +81,41 @@ const dict = t(lang);
     align-items: center;
     overflow: hidden;
   }
-  .hero-canvas,
-  .hero-mol {
+  .hero-canvas {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
+    z-index: 0;
     pointer-events: none;
   }
-  .hero-canvas { z-index: 0; }
-  .hero-mol { z-index: 1; }
-  .mol { stroke: var(--teal); opacity: 0.35; }
-  .mol-node circle { fill: var(--paper); stroke: var(--teal); stroke-width: 1.2; opacity: 0.5; }
-  .mol-node circle:nth-child(2n) { fill: var(--teal); opacity: 0.4; }
+
+  .hero-visual {
+    position: absolute;
+    z-index: 1;
+    inset-block: 0;
+    inset-inline-end: -6%;
+    width: min(58%, 100vh);
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+  }
+  .hero-mol3d-svg,
+  .hero-mol3d {
+    grid-area: 1 / 1;
+    width: 100%;
+    aspect-ratio: 1;
+    max-height: 92%;
+  }
+  .hero-mol3d { opacity: 0; }
+  .hero.molecule-live .hero-mol3d { opacity: 1; }
+  .hero.molecule-live .hero-mol3d-svg { opacity: 0; }
+  .mol-label {
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    font-weight: 500;
+    fill: var(--ink-soft);
+  }
 
   .hero-content {
     position: relative;
@@ -93,5 +145,15 @@ const dict = t(lang);
   @keyframes hero-bob {
     0%, 100% { translate: 0 0; }
     50% { translate: 0 8px; }
+  }
+
+  @media (max-width: 860px) {
+    /* On small screens the molecule becomes a full-bleed backdrop behind the copy */
+    .hero-visual {
+      inset: 0;
+      width: 100%;
+      opacity: 0.3;
+    }
+    .hero-mol3d-svg, .hero-mol3d { max-height: 78%; }
   }
 </style>

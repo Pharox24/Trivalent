@@ -4,6 +4,7 @@ import { initMotion, destroyMotion } from './motion';
 import { initShader, destroyShader } from './shader';
 import { initDiagram, destroyDiagram } from './diagram';
 import { initCursor, destroyCursor } from './cursor';
+import { initMolecule, destroyMolecule } from './molecule';
 
 function updateScrollState() {
   document.documentElement.classList.toggle('is-scrolled', window.scrollY > 8);
@@ -21,6 +22,8 @@ document.addEventListener('astro:page-load', async () => {
   await nextTask();
   initDiagram();
   await nextTask();
+  initMolecule();
+  await nextTask();
   initShader();
   initCursor();
 });
@@ -30,4 +33,5 @@ document.addEventListener('astro:before-swap', () => {
   destroyShader();
   destroyDiagram();
   destroyCursor();
+  destroyMolecule();
 });

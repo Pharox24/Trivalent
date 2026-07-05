@@ -57,6 +57,7 @@ export const en = {
     noResults: 'No products match',
     back: 'Back',
     root: 'Feedstock',
+    downloadPdf: 'Download full coverage map (PDF)',
   },
 
   hero: {

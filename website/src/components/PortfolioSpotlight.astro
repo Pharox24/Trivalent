@@ -8,16 +8,22 @@ const dict = t(lang);
 const pg = dict.portfolioPage;
 
 const { nodes, index } = buildGraph();
-const label = (id: string) => {
-  const n = index[id];
-  if (!n) return id;
-  return lang === 'zh' ? n.zh : n.en;
+// Every node is shown bilingually: the page-language name as the primary line
+// and the complementary language (Chinese on EN/AR pages, English on ZH) as a
+// muted sub-line — matching the bilingual source map. Skipped when identical.
+const primaryOf = (n: { en: string; zh: string }) => (lang === 'zh' ? n.zh : n.en);
+const subOf = (n: { en: string; zh: string }) => {
+  const s = lang === 'zh' ? n.en : n.zh;
+  return s && s !== primaryOf(n) ? s : '';
 };
+const label = (id: string) => (index[id] ? primaryOf(index[id]) : id);
+const sub = (id: string) => (index[id] ? subOf(index[id]) : '');
 
 // Localised, minified graph for the client.
 const clientGraph = nodes.map((n) => ({
   id: n.id,
-  label: lang === 'zh' ? n.zh : n.en,
+  label: primaryOf(n),
+  sub: subOf(n),
   search: `${n.en} ${n.zh}`.toLowerCase(),
   coverage: n.coverage,
   parents: n.parents,
@@ -56,17 +62,26 @@ const focusChildren = focus.children.map((id) => index[id]).filter(Boolean);
       <div class="pf2-col pf2-col--left">
         {focusParents.length > 0 && <span class="pf2-colhead">{pg.madeFrom}</span>}
         {focusParents.map((p) => (
-          <button type="button" class={`pf2-node pf2-node--${p.coverage} pf2-node--parent`} data-id={p.id}>{label(p.id)}</button>
+          <button type="button" class={`pf2-node pf2-node--${p.coverage} pf2-node--parent`} data-id={p.id}>
+            <span class="pf2-label">{label(p.id)}</span>
+            {sub(p.id) && <span class="pf2-sub">{sub(p.id)}</span>}
+          </button>
         ))}
       </div>
       <div class="pf2-focuswrap">
-        <button type="button" class={`pf2-node pf2-node--${focus.coverage} pf2-node--focus`} data-id={focus.id} aria-current="true">{label(focus.id)}</button>
+        <button type="button" class={`pf2-node pf2-node--${focus.coverage} pf2-node--focus`} data-id={focus.id} aria-current="true">
+          <span class="pf2-label">{label(focus.id)}</span>
+          {sub(focus.id) && <span class="pf2-sub">{sub(focus.id)}</span>}
+        </button>
         {focus.parents.length === 0 && <span class="pf2-rootchip">{pg.root}</span>}
       </div>
       <div class="pf2-col pf2-col--right">
         {focusChildren.length > 0 && <span class="pf2-colhead">{pg.produces}</span>}
         {focusChildren.map((c) => (
-          <button type="button" class={`pf2-node pf2-node--${c.coverage} pf2-node--child`} data-id={c.id}>{label(c.id)}</button>
+          <button type="button" class={`pf2-node pf2-node--${c.coverage} pf2-node--child`} data-id={c.id}>
+            <span class="pf2-label">{label(c.id)}</span>
+            {sub(c.id) && <span class="pf2-sub">{sub(c.id)}</span>}
+          </button>
         ))}
       </div>
     </div>
@@ -202,20 +217,28 @@ const focusChildren = focus.children.map((id) => index[id]).filter(Boolean);
   .pf2-node {
     position: relative;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
     max-width: 15rem;
-    padding: 0.6em 1em;
+    padding: 0.5em 1em;
     background: var(--paper-raised);
     border: 1px solid var(--line);
     border-radius: 9px;
     font: inherit;
     font-size: var(--step--1);
     font-weight: 500;
+    line-height: 1.2;
     color: var(--ink);
     text-align: center;
     cursor: pointer;
     transition: border-color var(--dur-s) ease, box-shadow var(--dur-s) ease, transform var(--dur-s) ease;
   }
   .pf2-node:hover { border-color: var(--teal); transform: translateY(-2px); box-shadow: 0 8px 22px rgb(16 21 28 / 0.08); }
+  .pf2-sub { font-size: 0.8em; font-weight: 400; color: var(--ink-soft); }
+  .pf2-node--unit .pf2-sub { color: color-mix(in srgb, var(--paper) 68%, transparent); }
+  .pf2-node--daily .pf2-sub { color: #93731a; }
 
   .pf2-node--daily { background: #fdf3d0; border-color: #e6bd3a; }
   .pf2-node--tracked { border-color: var(--teal); }

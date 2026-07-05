@@ -59,6 +59,7 @@ export const ar: Dict = {
     noResults: 'لا توجد منتجات مطابقة',
     back: 'رجوع',
     root: 'مادة خام',
+    downloadPdf: 'تنزيل خريطة التغطية الكاملة (PDF)',
   },
 
   hero: {

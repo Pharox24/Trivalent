@@ -59,6 +59,7 @@ export const zh: Dict = {
     noResults: '未找到匹配产品',
     back: '返回',
     root: '原料',
+    downloadPdf: '下载完整产品覆盖图（PDF）',
   },
 
   hero: {

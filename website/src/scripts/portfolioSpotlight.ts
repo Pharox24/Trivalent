@@ -7,6 +7,7 @@ import { prefersReduced } from './motion';
 interface GNode {
   id: string;
   label: string;
+  sub: string;
   search: string;
   coverage: 'daily' | 'tracked' | 'unit' | 'app';
   parents: string[];
@@ -44,7 +45,16 @@ function setup(root: HTMLElement) {
     btn.type = 'button';
     btn.className = `pf2-node pf2-node--${g.coverage} pf2-node--${kind}`;
     btn.dataset.id = g.id;
-    btn.textContent = g.label;
+    const label = document.createElement('span');
+    label.className = 'pf2-label';
+    label.textContent = g.label;
+    btn.appendChild(label);
+    if (g.sub) {
+      const sub = document.createElement('span');
+      sub.className = 'pf2-sub';
+      sub.textContent = g.sub;
+      btn.appendChild(sub);
+    }
     if (kind === 'focus') btn.setAttribute('aria-current', 'true');
     return btn;
   };
@@ -202,7 +212,7 @@ function setup(root: HTMLElement) {
         const b = document.createElement('button');
         b.type = 'button';
         b.className = `pf2-resitem pf2-dot--${g.coverage}`;
-        b.textContent = g.label;
+        b.textContent = g.sub ? `${g.label} · ${g.sub}` : g.label;
         b.addEventListener('click', () => {
           setFocus(g.id);
           searchInput.value = '';

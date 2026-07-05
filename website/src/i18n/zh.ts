@@ -29,6 +29,7 @@ export const zh: Dict = {
   },
 
   nav: {
+    home: '首页',
     oilfield: '油田化学品',
     coatings: '涂料与胶粘',
     agro: '农化',

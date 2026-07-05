@@ -27,6 +27,7 @@ export const en = {
   },
 
   nav: {
+    home: 'Home',
     oilfield: 'Oilfield',
     coatings: 'Coatings',
     agro: 'Agro',

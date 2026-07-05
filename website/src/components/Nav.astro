@@ -7,6 +7,7 @@ const { lang, current = '' } = Astro.props;
 const dict = t(lang);
 
 const links = [
+  { slug: '', label: dict.nav.home },
   { slug: 'oilfield', label: dict.nav.oilfield },
   { slug: 'coatings', label: dict.nav.coatings },
   { slug: 'agro', label: dict.nav.agro },
@@ -14,7 +15,7 @@ const links = [
   { slug: 'contact', label: dict.nav.contact },
 ];
 ---
-<header class="nav" transition:persist="nav">
+<header class="nav">
   <div class="nav-inner container">
     <a class="nav-logo" href={pathFor(lang)} aria-label="Trivalent Chemical Group">
       <Logo />
@@ -31,16 +32,23 @@ const links = [
     </nav>
 
     <div class="nav-side">
-      <div class="nav-langs" aria-label={dict.footer.lang}>
-        {langs.map((l) => (
-          <a
-            class="nav-lang"
-            href={pathFor(l, current)}
-            aria-current={l === lang ? 'true' : undefined}
-            lang={l}
-          >{langLabel[l]}</a>
-        ))}
-      </div>
+      <details class="lang-switch">
+        <summary aria-label={dict.footer.lang}>
+          <span lang={lang}>{langLabel[lang]}</span>
+          <svg class="lang-caret" viewBox="0 0 10 6" width="10" height="6" aria-hidden="true">
+            <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.4" />
+          </svg>
+        </summary>
+        <ul class="lang-menu">
+          {langs.map((l) => (
+            <li>
+              <a href={pathFor(l, current)} lang={l} aria-current={l === lang ? 'true' : undefined}>
+                {langLabel[l]}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
       <a class="btn nav-cta" href={pathFor(lang, 'contact')} data-magnetic>{dict.nav.catalog}</a>
     </div>
   </div>
@@ -73,16 +81,52 @@ const links = [
   .nav-link[aria-current='page'] { color: var(--teal); }
 
   .nav-side { display: flex; align-items: center; gap: var(--space-l); }
-  .nav-langs { display: flex; gap: var(--space-xs); }
-  .nav-lang {
+  .nav-cta { font-size: var(--step--1); padding: 0.7em 1.4em; }
+
+  /* Language dropdown — native <details>, works with zero JS */
+  .lang-switch { position: relative; }
+  .lang-switch summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    list-style: none;
+    cursor: pointer;
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--ink);
+    padding: 0.35em 0.6em;
+    border-radius: 6px;
+    transition: background var(--dur-s) ease;
+  }
+  .lang-switch summary::-webkit-details-marker { display: none; }
+  .lang-switch summary:hover,
+  .lang-switch[open] summary { background: var(--teal-wash); color: var(--teal-deep); }
+  .lang-caret { transition: rotate var(--dur-s) var(--ease-out-expo); }
+  .lang-switch[open] .lang-caret { rotate: 180deg; }
+
+  .lang-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    inset-inline-end: 0;
+    min-width: 9rem;
+    list-style: none;
+    margin: 0;
+    padding: var(--space-xs);
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: 0 16px 40px rgb(16 21 28 / 0.12);
+  }
+  .lang-menu a {
+    display: block;
+    padding: 0.5em 0.75em;
+    border-radius: 6px;
     font-size: var(--step--1);
     text-decoration: none;
     color: var(--ink-soft);
-    padding: 0.15em 0.4em;
-    border-radius: 4px;
   }
-  .nav-lang[aria-current='true'] { color: var(--teal); font-weight: 600; }
-  .nav-cta { font-size: var(--step--1); padding: 0.7em 1.4em; }
+  .lang-menu a:hover { background: var(--teal-wash); color: var(--teal-deep); }
+  .lang-menu a[aria-current='true'] { color: var(--teal); font-weight: 600; }
 
   /* Mobile: logo row + horizontally scrollable link row. Zero-JS, always visible. */
   @media (max-width: 860px) {

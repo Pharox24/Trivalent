@@ -29,6 +29,7 @@ export const ar: Dict = {
   },
 
   nav: {
+    home: 'الرئيسية',
     oilfield: 'حقول النفط',
     coatings: 'الطلاءات',
     agro: 'الزراعة',

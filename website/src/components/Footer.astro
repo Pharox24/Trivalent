@@ -8,6 +8,7 @@ const { lang, current = '' } = Astro.props;
 const dict = t(lang);
 
 const links = [
+  { slug: '', label: dict.nav.home },
   { slug: 'oilfield', label: dict.nav.oilfield },
   { slug: 'coatings', label: dict.nav.coatings },
   { slug: 'agro', label: dict.nav.agro },

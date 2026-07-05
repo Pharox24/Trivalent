@@ -21,8 +21,23 @@ export function initMotion() {
     gsap.ticker.lagSmoothing(0);
   }
 
-  // Masked line-by-line headline reveals
+  // Masked line-by-line headline reveals.
+  // Arabic gets a plain fade-up instead: the line masks (overflow: hidden)
+  // clip harakat and descenders that extend beyond the line box.
+  // Touch devices also take the fade path — SplitText's measuring is the
+  // single most expensive init step on throttled mobile CPUs.
+  const useFade = document.documentElement.lang === 'ar' || isTouch();
   document.querySelectorAll<HTMLElement>('[data-split]').forEach((el) => {
+    if (useFade) {
+      gsap.from(el, {
+        y: 32,
+        opacity: 0,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 85%' },
+      });
+      return;
+    }
     const split = SplitText.create(el, { type: 'lines', mask: 'lines' });
     splits.push(split);
     gsap.from(split.lines, {

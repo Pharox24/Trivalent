@@ -1,7 +1,7 @@
 // Restrained hero backdrop: faint teal caustics drifting across paper.
 // Degrades by removing the canvas — the static molecular SVG behind it remains.
 import { Renderer, Program, Mesh, Triangle } from 'ogl';
-import { prefersReduced } from './motion';
+import { prefersReduced, isTouch } from './motion';
 
 const frag = /* glsl */ `
 precision highp float;
@@ -44,13 +44,15 @@ let cleanup: (() => void) | null = null;
 export function initShader() {
   const canvas = document.querySelector<HTMLCanvasElement>('.hero-canvas');
   if (!canvas) return;
-  if (prefersReduced()) {
+  // Touch devices get the static molecular SVG only — per-frame WebGL on
+  // phone CPUs costs more in jank than the effect is worth.
+  if (prefersReduced() || isTouch()) {
     canvas.remove();
     return;
   }
 
   try {
-    const renderer = new Renderer({ canvas, dpr: Math.min(devicePixelRatio, 2) });
+    const renderer = new Renderer({ canvas, dpr: Math.min(devicePixelRatio, 1.5) });
     const gl = renderer.gl;
     const program = new Program(gl, {
       vertex: vert,

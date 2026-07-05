@@ -11,12 +11,17 @@ function updateScrollState() {
 
 window.addEventListener('scroll', updateScrollState, { passive: true });
 
-// astro:page-load also fires on initial load.
-document.addEventListener('astro:page-load', () => {
+const nextTask = () => new Promise<void>((r) => setTimeout(r, 0));
+
+// astro:page-load also fires on initial load. Init is spread across
+// macrotasks so no single long task blocks the main thread on mobile.
+document.addEventListener('astro:page-load', async () => {
   updateScrollState();
   initMotion();
-  initShader();
+  await nextTask();
   initDiagram();
+  await nextTask();
+  initShader();
   initCursor();
 });
 

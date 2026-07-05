@@ -13,6 +13,9 @@ function setupDraw(section: HTMLElement) {
   if (prefersReduced()) return;
 
   section.querySelectorAll<SVGSVGElement>('.vc-svg').forEach((svg) => {
+    // Only the orientation visible at this breakpoint gets animated —
+    // setting dash/transform state on the hidden one doubles init cost for nothing.
+    if (getComputedStyle(svg).display === 'none') return;
     const edges = [...svg.querySelectorAll<SVGPathElement>('.vc-edge')];
     const nodes = [...svg.querySelectorAll<SVGGElement | SVGAElement>('.vc-node')];
 

@@ -20,6 +20,10 @@ export const en = {
       title: 'About — Trivalent Chemical Group',
       desc: 'Three bonds, three divisions, one supply chain between China and the markets of Egypt, the Gulf, and Africa.',
     },
+    portfolio: {
+      title: 'Portfolio — Trivalent Chemical Group',
+      desc: 'The full chemical value chain we cover, from crude oil, salt, sulphur, coal, and natural gas through every downstream product family.',
+    },
     contact: {
       title: 'Contact — Trivalent Chemical Group',
       desc: 'Request a product catalog or a quotation. Tell us the product, quantity, and destination port.',
@@ -31,11 +35,26 @@ export const en = {
     oilfield: 'Oilfield',
     coatings: 'Coatings',
     agro: 'Agro',
+    portfolio: 'Portfolio',
     about: 'About',
     contact: 'Contact',
     catalog: 'Request Catalog',
     menu: 'Menu',
     close: 'Close',
+  },
+
+  portfolioPage: {
+    kicker: 'Full value-chain coverage',
+    title: 'Every product, from feedstock to finish.',
+    intro: 'The complete chemical value chain we source and trade — crude oil, salt, sulphur, coal, and natural gas through every downstream family. Drag to pan, scroll or pinch to zoom.',
+    legendDaily: 'Core traded products',
+    legendTracked: 'Extended coverage',
+    legendUnit: 'Feedstock / process unit',
+    legendApp: 'End-use application',
+    reset: 'Reset view',
+    zoomIn: 'Zoom in',
+    zoomOut: 'Zoom out',
+    hint: 'Drag to pan · scroll to zoom',
   },
 
   hero: {

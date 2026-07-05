@@ -6,6 +6,7 @@ import { initDiagram, destroyDiagram } from './diagram';
 import { initCursor, destroyCursor } from './cursor';
 import { initMolecule, destroyMolecule } from './molecule';
 import { initHero3D, destroyHero3D } from './hero3d';
+import { initPortfolio, destroyPortfolio } from './portfolio';
 
 function updateScrollState() {
   document.documentElement.classList.toggle('is-scrolled', window.scrollY > 8);
@@ -29,6 +30,7 @@ document.addEventListener('astro:page-load', async () => {
   await nextTask();
   initShader();
   initCursor();
+  initPortfolio();
 });
 
 document.addEventListener('astro:before-swap', () => {
@@ -38,4 +40,5 @@ document.addEventListener('astro:before-swap', () => {
   destroyCursor();
   destroyMolecule();
   destroyHero3D();
+  destroyPortfolio();
 });

@@ -22,6 +22,10 @@ export const zh: Dict = {
       title: '关于我们 — 三价化工集团',
       desc: '三个键，三大事业部，一条贯通中国与埃及、海湾、非洲市场的供应链。',
     },
+    portfolio: {
+      title: '产品图谱 — 三价化工集团',
+      desc: '我们覆盖的完整化工价值链——从原油、原盐、硫磺、煤炭到天然气，贯通每一个下游产品系列。',
+    },
     contact: {
       title: '联系我们 — 三价化工集团',
       desc: '索取产品目录或询价。告诉我们产品、数量与目的港。',
@@ -33,11 +37,26 @@ export const zh: Dict = {
     oilfield: '油田化学品',
     coatings: '涂料与胶粘',
     agro: '农化',
+    portfolio: '产品图谱',
     about: '关于我们',
     contact: '联系我们',
     catalog: '索取产品目录',
     menu: '菜单',
     close: '关闭',
+  },
+
+  portfolioPage: {
+    kicker: '完整价值链覆盖',
+    title: '每一种产品，从原料到成品。',
+    intro: '我们采购与经营的完整化工价值链——从原油、原盐、硫磺、煤炭到天然气，贯通每一个下游系列。拖动平移，滚动或双指缩放。',
+    legendDaily: '核心经营产品',
+    legendTracked: '延伸覆盖',
+    legendUnit: '原料 / 工艺装置',
+    legendApp: '终端应用',
+    reset: '重置视图',
+    zoomIn: '放大',
+    zoomOut: '缩小',
+    hint: '拖动平移 · 滚动缩放',
   },
 
   hero: {

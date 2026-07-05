@@ -1,0 +1,94 @@
+---
+import { layout } from '../data/portfolioLayout';
+import type { Diagram } from '../data/portfolio';
+import type { Lang } from '../i18n';
+
+interface Props { diagram: Diagram; lang: Lang }
+const { diagram, lang } = Astro.props;
+const laid = layout(diagram);
+const label = (en: string, zh: string) => (lang === 'zh' ? zh : en);
+const title = lang === 'zh' ? laid.titleZh : laid.titleEn;
+
+// Curable bezier connectors (left-to-right flow).
+const path = (e: (typeof laid.edges)[number]) => {
+  const mx = (e.x1 + e.x2) / 2;
+  return `M ${e.x1.toFixed(1)} ${e.y1.toFixed(1)} C ${mx.toFixed(1)} ${e.y1.toFixed(1)}, ${mx.toFixed(1)} ${e.y2.toFixed(1)}, ${e.x2.toFixed(1)} ${e.y2.toFixed(1)}`;
+};
+---
+<section class="pf-diagram" data-reveal>
+  <h2 class="pf-dtitle">{title}</h2>
+  <div class="pf-stage" data-pf-stage>
+    <div class="pf-pan" data-pf-pan>
+      <svg
+        class="pf-svg"
+        viewBox={`0 0 ${laid.width} ${laid.height}`}
+        width={laid.width}
+        height={laid.height}
+        role="img"
+        aria-label={title}
+      >
+        <g class="pf-edges">
+          {laid.edges.map((edge) => <path class="pf-edge" data-from={edge.from} data-to={edge.to} d={path(edge)} />)}
+        </g>
+        <g class="pf-nodes">
+          {laid.nodes.map((node) => (
+            <g class={`pf-node pf-node--${node.coverage}`} data-node={node.id} transform={`translate(${node.x} ${node.y})`}>
+              <rect width={node.w} height={node.h} rx={node.coverage === 'unit' ? node.h / 2 : 5} />
+              <text x={node.w / 2} y={node.h / 2 + 4} text-anchor="middle">{label(node.en, node.zh)}</text>
+            </g>
+          ))}
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pf-diagram { margin-top: var(--space-2xl); }
+  .pf-dtitle {
+    font-size: var(--step-2);
+    margin-bottom: var(--space-m);
+    padding-bottom: var(--space-s);
+    border-bottom: 1px solid var(--line);
+  }
+  .pf-stage {
+    position: relative;
+    overflow: hidden;
+    height: min(72vh, 760px);
+    background:
+      linear-gradient(var(--paper-raised), var(--paper-raised)) padding-box,
+      radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0) 0 0 / 26px 26px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    cursor: grab;
+    touch-action: none;
+  }
+  .pf-stage.is-grabbing { cursor: grabbing; }
+  .pf-pan { position: absolute; top: 0; left: 0; transform-origin: 0 0; will-change: transform; }
+  .pf-svg { display: block; }
+
+  .pf-edge { fill: none; stroke: var(--line); stroke-width: 1.2; transition: stroke 0.2s ease, stroke-width 0.2s ease; }
+  .pf-edge.is-lit { stroke: var(--teal); stroke-width: 2; }
+
+  .pf-node { cursor: pointer; }
+  .pf-node rect { stroke-width: 1.2; transition: filter 0.2s ease; }
+  .pf-node text {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 500;
+    fill: var(--ink);
+    pointer-events: none;
+  }
+  html[lang='zh'] .pf-node text { font-size: 12.5px; }
+
+  /* Coverage colour system, aligned with the source map's legend */
+  .pf-node--daily rect { fill: #f4c430; stroke: #d9a800; }
+  .pf-node--tracked rect { fill: var(--paper-raised); stroke: var(--teal); }
+  .pf-node--unit rect { fill: var(--ink); stroke: var(--ink); }
+  .pf-node--unit text { fill: var(--paper); font-weight: 600; }
+  .pf-node--app rect { fill: var(--paper-raised); stroke: var(--line); }
+  .pf-node--app text { fill: var(--ink-soft); }
+
+  .pf-node.is-dim { opacity: 0.28; transition: opacity 0.2s ease; }
+  .pf-node.is-focus rect { filter: drop-shadow(0 4px 12px rgb(13 107 107 / 0.35)); }
+</style>

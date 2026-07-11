@@ -21,41 +21,43 @@ const depthOf = (z: number) => (z + 1) / 2;
   <canvas class="hero-canvas" aria-hidden="true"></canvas>
 
   <div class="hero-visual" aria-hidden="true">
-    <svg class="hero-mol3d-svg" viewBox={`0 0 ${VB} ${VB}`}>
-      {staticEdges.map(({ a, b, z }) => (
-        <line
-          x1={a.x.toFixed(1)} y1={a.y.toFixed(1)}
-          x2={b.x.toFixed(1)} y2={b.y.toFixed(1)}
-          stroke="var(--teal)"
-          stroke-width={(0.7 + depthOf(z) * 0.9).toFixed(2)}
-          opacity={(0.14 + depthOf(z) * 0.66).toFixed(2)}
-        />
-      ))}
-      {p.map((pt, vi) => {
-        const d = depthOf(pt.z);
-        const r = (1.6 + d * 2.6).toFixed(2);
-        return d > 0.82 ? (
-          <circle cx={pt.x.toFixed(1)} cy={pt.y.toFixed(1)} r={r} fill="var(--ink)" />
-        ) : d > 0.45 ? (
-          <circle cx={pt.x.toFixed(1)} cy={pt.y.toFixed(1)} r={r} fill="var(--teal)" opacity={(0.25 + d * 0.75).toFixed(2)} />
-        ) : (
-          <circle cx={pt.x.toFixed(1)} cy={pt.y.toFixed(1)} r={r} fill="var(--paper)" stroke="var(--teal)" stroke-width="1" opacity={(0.25 + d * 0.75).toFixed(2)} />
-        );
-      })}
-      {labeled.map((vi, li) =>
-        p[vi].z > 0.15 ? (
-          <g opacity={Math.min(1, (p[vi].z - 0.15) / 0.5).toFixed(2)}>
-            <line
-              x1={(p[vi].x + 6).toFixed(1)} y1={(p[vi].y - 6).toFixed(1)}
-              x2={(p[vi].x + 16).toFixed(1)} y2={(p[vi].y - 16).toFixed(1)}
-              stroke="var(--ink-soft)" stroke-width="0.8"
-            />
-            <text x={(p[vi].x + 20).toFixed(1)} y={(p[vi].y - 12).toFixed(1)} class="mol-label">{LABELS[li]}</text>
-          </g>
-        ) : null
-      )}
-    </svg>
-    <canvas class="hero-mol3d"></canvas>
+    <div class="hero-mol">
+      <svg class="hero-mol3d-svg" viewBox={`0 0 ${VB} ${VB}`}>
+        {staticEdges.map(({ a, b, z }) => (
+          <line
+            x1={a.x.toFixed(1)} y1={a.y.toFixed(1)}
+            x2={b.x.toFixed(1)} y2={b.y.toFixed(1)}
+            stroke="#7c848e"
+            stroke-width={(0.7 + depthOf(z) * 0.9).toFixed(2)}
+            opacity={(0.14 + depthOf(z) * 0.66).toFixed(2)}
+          />
+        ))}
+        {p.map((pt, vi) => {
+          const d = depthOf(pt.z);
+          const r = (1.6 + d * 2.6).toFixed(2);
+          return d > 0.82 ? (
+            <circle cx={pt.x.toFixed(1)} cy={pt.y.toFixed(1)} r={r} fill="var(--ink)" />
+          ) : d > 0.45 ? (
+            <circle cx={pt.x.toFixed(1)} cy={pt.y.toFixed(1)} r={r} fill="#7c848e" opacity={(0.25 + d * 0.75).toFixed(2)} />
+          ) : (
+            <circle cx={pt.x.toFixed(1)} cy={pt.y.toFixed(1)} r={r} fill="var(--paper)" stroke="#7c848e" stroke-width="1" opacity={(0.25 + d * 0.75).toFixed(2)} />
+          );
+        })}
+        {labeled.map((vi, li) =>
+          p[vi].z > 0.15 ? (
+            <g opacity={Math.min(1, (p[vi].z - 0.15) / 0.5).toFixed(2)}>
+              <line
+                x1={(p[vi].x + 6).toFixed(1)} y1={(p[vi].y - 6).toFixed(1)}
+                x2={(p[vi].x + 16).toFixed(1)} y2={(p[vi].y - 16).toFixed(1)}
+                stroke="var(--ink-soft)" stroke-width="0.8"
+              />
+              <text x={(p[vi].x + 20).toFixed(1)} y={(p[vi].y - 12).toFixed(1)} class="mol-label">{LABELS[li]}</text>
+            </g>
+          ) : null
+        )}
+      </svg>
+      <canvas class="hero-mol3d"></canvas>
+    </div>
   </div>
 
   <div class="container hero-content">
@@ -90,22 +92,35 @@ const depthOf = (z: number) => (z + 1) / 2;
     pointer-events: none;
   }
 
+  /* The molecule is anchored inside the hero — it scrolls away with the hero
+     content rather than flying off to a corner. Sits behind the headline
+     (z-index) and reads as a half-hero backdrop; pointer-events none keeps
+     everything beneath it clickable. */
   .hero-visual {
     position: absolute;
     z-index: 1;
-    inset-block: 0;
-    inset-inline-end: -7%;
-    width: min(53%, 96vh);
+    inset: 0;
+    pointer-events: none;
+  }
+
+  /* The molecule box — right half of the hero, vertically centred. */
+  .hero-mol {
+    position: absolute;
+    top: 50%;
+    inset-inline-end: max(2vw, calc(50% - var(--container) / 2));
+    /* Viewport-relative so it scales up on large monitors; capped by height so
+       it never overruns the hero vertically. */
+    width: min(46vw, calc(100svh - 12rem));
+    aspect-ratio: 1;
     display: grid;
     place-items: center;
-    pointer-events: none;
+    translate: 0 -50%;
   }
   .hero-mol3d-svg,
   .hero-mol3d {
     grid-area: 1 / 1;
     width: 100%;
     aspect-ratio: 1;
-    max-height: 92%;
   }
   .hero-mol3d { opacity: 0; }
   .hero.molecule-live .hero-mol3d { opacity: 1; }
@@ -117,7 +132,7 @@ const depthOf = (z: number) => (z + 1) / 2;
     fill: var(--ink-soft);
   }
   /* HTML overlay labels created by hero3d.ts (Three.js path) */
-  .hero-visual :global(.mol3d-label) {
+  .hero-mol :global(.mol3d-label) {
     position: absolute;
     top: 0;
     left: 0;
@@ -162,12 +177,15 @@ const depthOf = (z: number) => (z + 1) / 2;
   }
 
   @media (max-width: 860px) {
-    /* On small screens the molecule becomes a full-bleed backdrop behind the copy */
-    .hero-visual {
+    /* No dock on small screens — molecule is a calm in-hero backdrop */
+    .hero-visual { position: absolute; z-index: 1; opacity: 0.3; }
+    .hero-mol {
       inset: 0;
       width: 100%;
-      opacity: 0.3;
+      height: 100%;
+      translate: none;
     }
+    html[dir='rtl'] .hero-mol { translate: none; }
     .hero-mol3d-svg, .hero-mol3d { max-height: 78%; }
   }
 </style>

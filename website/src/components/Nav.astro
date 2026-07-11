@@ -61,13 +61,18 @@ const links = [
     inset-inline: 0;
     top: 0;
     z-index: 50;
-    background: color-mix(in srgb, var(--paper) 82%, transparent);
+    /* High opacity so bold headline text scrolling underneath reads as a clean
+       frosted panel, not a blurry smear. Firms up further once scrolled. */
+    background: color-mix(in srgb, var(--paper) 90%, transparent);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid transparent;
-    transition: border-color var(--dur-s) ease;
+    transition: background var(--dur-s) ease, border-color var(--dur-s) ease;
   }
-  :global(html.is-scrolled) .nav { border-bottom-color: var(--line); }
+  :global(html.is-scrolled) .nav {
+    background: color-mix(in srgb, var(--paper) 96%, transparent);
+    border-bottom-color: var(--line);
+  }
 
   .nav-inner {
     display: flex;

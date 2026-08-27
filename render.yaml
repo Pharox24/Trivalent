@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: trivalent
+    runtime: static
+    rootDir: website
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
